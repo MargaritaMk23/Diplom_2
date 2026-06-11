@@ -35,5 +35,15 @@ build/
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
+
+# Allure
+allure-results/
+
+# IntelliJ IDEA
+.idea/
+
+# Mac
 .DS_Store
+
+# Logs
+*.log
