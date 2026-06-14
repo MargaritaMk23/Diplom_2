@@ -37,7 +37,7 @@ build/
 
 
 # Allure
-allure-results/
+allure-report/
 
 # IntelliJ IDEA
 .idea/
@@ -47,3 +47,4 @@ allure-results/
 
 # Logs
 *.log
+

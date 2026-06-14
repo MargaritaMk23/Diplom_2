@@ -111,7 +111,6 @@
                 <version>3.2.5</version>
 
                 <configuration>
-
                     <!-- JUnit4 Allure listener -->
                     <properties>
                         <property>
