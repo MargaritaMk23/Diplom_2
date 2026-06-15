@@ -7,13 +7,61 @@ import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.Test;
+import utils.UserGenerator;
+import org.junit.After;
+
 
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.CoreMatchers.equalTo;
+
 
 public class CreateUserTest extends BaseTest {
 
     private final UserClient userClient = new UserClient();
+
+    private String accessToken;
+
+    @Test
+    @DisplayName("Создание уникального пользователя")
+    @Description("Проверка успешного создания нового уникального пользователя")
+    public void createUniqueUserSuccess() {
+
+        User user = UserGenerator.getRandomUser();
+
+        Response response = userClient.createUser(user);
+
+        accessToken = response
+                .body()
+                .jsonPath()
+                .getString("accessToken");
+
+        response.then()
+                .statusCode(SC_OK)
+                .body("success", equalTo(true));
+    }
+
+    @Test
+    @DisplayName("Создание уже существующего пользователя")
+    @Description("Проверка ошибки при создании пользователя, который уже существует")
+    public void createExistingUserFailed() {
+
+        User user = UserGenerator.getRandomUser();
+
+        Response firstResponse = userClient.createUser(user);
+
+        accessToken = firstResponse
+                .body()
+                .jsonPath()
+                .getString("accessToken");
+
+        Response secondResponse = userClient.createUser(user);
+
+        secondResponse.then()
+                .statusCode(SC_FORBIDDEN)
+                .body("message",
+                        equalTo("User already exists"));
+    }
 
     @Test
     @DisplayName("Создание пользователя без email")
@@ -70,5 +118,13 @@ public class CreateUserTest extends BaseTest {
                 .statusCode(SC_FORBIDDEN)
                 .body("message",
                         equalTo("Email, password and name are required fields"));
+    }
+
+    @After
+    public void tearDown() {
+
+        if (accessToken != null) {
+            userClient.deleteUser(accessToken);
+        }
     }
 }

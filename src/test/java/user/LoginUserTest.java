@@ -28,6 +28,18 @@ public class LoginUserTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Логин существующего пользователя")
+    @Description("Проверка успешного логина пользователя")
+    public void loginWithValidCredentialsSuccess() {
+
+        Response response = userClient.loginUser(user);
+
+        response.then()
+                .statusCode(SC_OK)
+                .body("success", equalTo(true));
+    }
+
+    @Test
     @DisplayName("Логин с неверным логином")
     @Description("Проверка ошибки при неверном email")
     public void loginWithWrongEmailFailed() {
